@@ -7,24 +7,25 @@ from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from inference import DEFAULT_MODEL_PATH, GenderClassifier
-
-
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
+MODEL_PATH = BASE_DIR / "artifacts" / "best_model.pth"
 
 app = FastAPI(title="Gender Classification")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
-def load_classifier() -> GenderClassifier:
-    model_path = Path(DEFAULT_MODEL_PATH)
-    if not model_path.exists():
+def load_classifier():
+    # Import the heavy PyTorch inference stack lazily so the web server can bind
+    # to Render's port quickly during startup.
+    from inference import GenderClassifier
+
+    if not MODEL_PATH.exists():
         raise FileNotFoundError(
-            f"Checkpoint not found at {model_path.resolve()}. "
+            f"Checkpoint not found at {MODEL_PATH.resolve()}. "
             "Train the model first so artifacts/best_model.pth exists."
         )
-    return GenderClassifier(model_path=model_path)
+    return GenderClassifier(model_path=MODEL_PATH)
 
 
 @app.get("/", response_class=HTMLResponse)
