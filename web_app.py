@@ -30,8 +30,9 @@ def load_classifier() -> GenderClassifier:
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "result": None, "error": None},
+        request=request,
+        name="index.html",
+        context={"request": request, "result": None, "error": None},
     )
 
 
@@ -44,8 +45,9 @@ async def health():
 async def predict(request: Request, image: UploadFile = File(...)):
     if not image.filename:
         return templates.TemplateResponse(
-            "index.html",
-            {"request": request, "result": None, "error": "Please upload an image file."},
+            request=request,
+            name="index.html",
+            context={"request": request, "result": None, "error": "Please upload an image file."},
             status_code=400,
         )
 
@@ -75,6 +77,7 @@ async def predict(request: Request, image: UploadFile = File(...)):
     }
 
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "result": result, "error": None},
+        request=request,
+        name="index.html",
+        context={"request": request, "result": result, "error": None},
     )
