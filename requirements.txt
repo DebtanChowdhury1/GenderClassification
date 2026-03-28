@@ -1,0 +1,11 @@
+torch
+torchvision
+pillow
+matplotlib
+numpy
+pandas
+scikit-learn
+fastapi
+uvicorn
+jinja2
+python-multipart

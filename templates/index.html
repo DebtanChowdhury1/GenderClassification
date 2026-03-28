@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Classification</title>
+    <style>
+        :root {
+            --bg: #f6f3ee;
+            --panel: #fffaf2;
+            --text: #1f1b16;
+            --muted: #6e665d;
+            --accent: #175c4c;
+            --accent-2: #d68a2e;
+            --border: #ddd2c3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(214, 138, 46, 0.18), transparent 28%),
+                linear-gradient(180deg, #f4efe7 0%, #f8f5ef 100%);
+            color: var(--text);
+        }
+
+        .wrap {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+
+        .hero {
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 42px;
+            line-height: 1.05;
+        }
+
+        .sub {
+            color: var(--muted);
+            max-width: 620px;
+            font-size: 16px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(31, 27, 22, 0.08);
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+        }
+
+        input[type="file"] {
+            padding: 14px;
+            background: #fff;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+        }
+
+        button {
+            width: fit-content;
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 20px;
+            background: var(--accent);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #11483c;
+        }
+
+        .error {
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #fff0ec;
+            border: 1px solid #efc3b5;
+            color: #8b3a1d;
+        }
+
+        .result {
+            margin-top: 20px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .headline {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .metric {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 16px;
+        }
+
+        .metric .label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .metric .value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <h1>Gender Classification</h1>
+            <div class="sub">
+                Upload an image and run local PyTorch inference through a simple web UI.
+                This Render deployment expects a trained checkpoint at <code>artifacts/best_model.pth</code>.
+            </div>
+        </div>
+
+        <div class="card">
+            <form action="/predict" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" accept=".jpg,.jpeg,.png,.bmp,.webp" required>
+                <button type="submit">Predict</button>
+            </form>
+
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            {% if result %}
+                <div class="result">
+                    <div class="headline">Prediction: {{ result.label }}</div>
+                    <div class="grid">
+                        <div class="metric">
+                            <div class="label">Confidence</div>
+                            <div class="value">{{ result.confidence }}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Female Probability</div>
+                            <div class="value">{{ result.female_probability }}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Male Probability</div>
+                            <div class="value">{{ result.male_probability }}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Architecture</div>
+                            <div class="value">{{ result.architecture }}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Device</div>
+                            <div class="value">{{ result.device }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
